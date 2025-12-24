@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday eCard 🎉</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+  body { height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center; transition:background 1.2s ease; background:linear-gradient(#fbc2eb,#a6c1ee);}
+  
+  .ecard { position: relative; background: rgba(255,255,255,0.95); width: 90%; max-width: 450px; padding:40px 30px; border-radius:25px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.25); z-index:10; animation:cardIn 0.9s ease; }
+  @keyframes cardIn { from { transform: scale(0.8); opacity:0;} to { transform: scale(1); opacity:1; } }
+
+  h1{ font-size:2.2rem; margin-bottom:10px; transition: color 1s ease; }
+  h2{ font-size:1.3rem; margin-bottom:18px; color:#555; }
+  p{ font-size:1.1rem; min-height:90px; line-height:1.7; margin-bottom:15px; animation:textFade 0.8s ease; }
+  @keyframes textFade { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
+
+  button{ padding:14px 35px; border:none; border-radius:25px; font-size:1rem; cursor:pointer; color:white; transition: transform 0.2s, background 1s ease; margin-top:10px;}
+  button:hover{ transform: scale(1.08); }
+  #sendBtn{ background-color:#3498db;} /* Blue color for Send Wish */
+
+  .final{ font-weight:bold; animation:glow 2s infinite alternate; }
+  @keyframes glow{ from{ text-shadow:0 0 6px currentColor;} to{ text-shadow:0 0 20px currentColor;} }
+
+  /* Animations */
+  .balloon{ position:absolute; bottom:-60px; font-size:28px; animation:rise linear forwards;}
+  @keyframes rise{ to{ transform:translateY(-120vh) rotate(360deg); opacity:0; } }
+
+  .confetti{ position:absolute; width:10px; height:10px; opacity:0.8; transform:rotate(45deg); animation:confettiFall linear forwards; }
+  @keyframes confettiFall{ to{ transform:translateY(110vh) rotate(360deg); opacity:0; } }
+
+  .heart{ position:absolute; top:-20px; font-size:18px; animation:fall linear forwards; }
+  @keyframes fall{ to{ transform:translateY(110vh); opacity:0; } }
+
+  .snow{ position:absolute; top:-10px; font-size:18px; color:white; animation:snowFall linear forwards; }
+  @keyframes snowFall{ to{ transform:translateY(110vh); opacity:0;} }
+
+  .santa{ position:absolute; bottom:0; right:10px; font-size:100px; animation:santaMove 2s infinite alternate ease-in-out;}
+  @keyframes santaMove{ 0%{transform: translateY(0) rotate(-10deg);} 50%{transform: translateY(-10px) rotate(10deg);} 100%{transform: translateY(0) rotate(-10deg);} }
+
+  .wish-box{ display:flex; flex-direction:column; align-items:center; margin-top:15px;}
+  textarea{ width:90%; padding:10px; border-radius:10px; border:1px solid #aaa; resize:none; margin-top:10px; font-size:1rem;}
+</style>
+</head>
+<body>
+
+<div class="ecard">
+  <h1 id="title">🎂 Happy Birthday</h1>
+  <h2>Keerthi</h2>
+  <p id="message"></p>
+  <button id="btn" onclick="nextWish()">Next</button>
+
+  <div class="wish-box" id="wishBox" style="display:none;">
+    <div class="santa">🎅</div>
+    <p>Write your wish here:</p>
+    <textarea id="userWish" rows="3" placeholder="Type your wish..."></textarea>
+    <button id="sendBtn" onclick="sendWish()">Send Wish</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+<script>
+  emailjs.init("i_ddugLdA5DnAdBVDWbYl");
+
+  const steps = [
+    { bg: 'linear-gradient(#fbc2eb, #a6c1ee)', color: '#ff4f81', text: 'Wishing the love of my life a day as beautiful, bright, and special as your soul..' },
+    { bg: 'linear-gradient(#fddb92, #d1fdff)', color: '#ff9f1c', text: 'May our journey together be full of love, laughter, and endless adventures.' },
+    { bg: 'linear-gradient(#b8e994, #78e08f)', color: '#2d8659', text: 'Let’s stay forever and achieve success together ❤️' }
+  ];
+
+  let i=0;
+  const msg=document.getElementById('message');
+  const btn=document.getElementById('btn');
+  const title=document.getElementById('title');
+
+  function nextWish(){
+    if(i>=steps.length) return;
+    document.body.style.background=steps[i].bg;
+    title.style.color=steps[i].color;
+    btn.style.background=steps[i].color;
+    msg.textContent=steps[i].text;
+    msg.classList.remove('final');
+
+    createBalloon(); createConfetti();
+
+    if(i===steps.length-1){ 
+      msg.classList.add('final'); 
+      btn.style.display='none'; 
+      startHeartShower(); 
+      startSnowShower(); 
+      document.getElementById('wishBox').style.display='flex';
+    }
+    i++;
+  }
+
+  function createBalloon(){
+    const balloon=document.createElement('div'); balloon.className='balloon';
+    balloon.textContent='🎈'; balloon.style.left=Math.random()*100+'vw';
+    balloon.style.animationDuration=4+Math.random()*3+'s'; 
+    document.body.appendChild(balloon);
+    setTimeout(()=>balloon.remove(),7000);
+  }
+
+  function createConfetti(){
+    for(let j=0;j<10;j++){
+      const confetti=document.createElement('div'); confetti.className='confetti';
+      confetti.style.left=Math.random()*100+'vw';
+      confetti.style.backgroundColor=`hsl(${Math.random()*360},80%,60%)`;
+      confetti.style.animationDuration=2+Math.random()*3+'s';
+      document.body.appendChild(confetti); setTimeout(()=>confetti.remove(),5000);
+    }
+  }
+
+  function startHeartShower(){
+    setInterval(()=>{
+      for(let k=0;k<4;k++){ // more hearts
+        const heart=document.createElement('div'); heart.className='heart';
+        heart.textContent=Math.random()>0.5?'💖':'💙';
+        heart.style.left=Math.random()*100+'vw';
+        heart.style.fontSize=12+Math.random()*12+'px';
+        heart.style.animationDuration=3+Math.random()*3+'s';
+        document.body.appendChild(heart); setTimeout(()=>heart.remove(),6000);
+      }
+    },120);
+  }
+
+  function startSnowShower(){
+    setInterval(()=>{
+      const snow=document.createElement('div'); snow.className='snow'; snow.textContent='❄';
+      snow.style.left=Math.random()*100+'vw';
+      snow.style.animationDuration=5+Math.random()*5+'s';
+      document.body.appendChild(snow); setTimeout(()=>snow.remove(),7000);
+    },300);
+  }
+
+  function sendWish(){
+    const wishText=document.getElementById('userWish').value;
+    if(!wishText) return alert('Please write your wish first!');
+
+    emailjs.send(
+      "service_1qmmdpu",
+      "template_njn6bno",
+      { user_email:"07sathish.c@gmail.com", message:wishText },
+      "i_ddugLdA5DnAdBVDWbYl"
+    )
+    .then(response=>{
+      alert('Wish sent successfully!');
+      document.getElementById('userWish').value='';
+      console.log('EmailJS response:', response);
+    })
+    .catch(err=>{
+      alert('Error sending wish. Check console.');
+      console.error('EmailJS error:', err);
+    });
+  }
+
+  nextWish();
+</script>
+</body>
+</html>
