@@ -18,7 +18,7 @@
 
   button{ padding:14px 35px; border:none; border-radius:25px; font-size:1rem; cursor:pointer; color:white; transition: transform 0.2s, background 1s ease; margin-top:10px;}
   button:hover{ transform: scale(1.08); }
-  #sendBtn{ background-color:#3498db;} /* Blue color for Send Wish */
+  #sendBtn{ background-color:#3498db;} /* Blue button */
 
   .final{ font-weight:bold; animation:glow 2s infinite alternate; }
   @keyframes glow{ from{ text-shadow:0 0 6px currentColor;} to{ text-shadow:0 0 20px currentColor;} }
@@ -41,6 +41,7 @@
 
   .wish-box{ display:flex; flex-direction:column; align-items:center; margin-top:15px;}
   textarea{ width:90%; padding:10px; border-radius:10px; border:1px solid #aaa; resize:none; margin-top:10px; font-size:1rem;}
+  #feedback{ margin-top:10px; color:green; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -56,6 +57,7 @@
     <p>Write your wish here:</p>
     <textarea id="userWish" rows="3" placeholder="Type your wish..."></textarea>
     <button id="sendBtn" onclick="sendWish()">Send Wish</button>
+    <div id="feedback"></div>
   </div>
 </div>
 
@@ -114,7 +116,7 @@
 
   function startHeartShower(){
     setInterval(()=>{
-      for(let k=0;k<4;k++){ // more hearts
+      for(let k=0;k<4;k++){ 
         const heart=document.createElement('div'); heart.className='heart';
         heart.textContent=Math.random()>0.5?'💖':'💙';
         heart.style.left=Math.random()*100+'vw';
@@ -136,6 +138,7 @@
 
   function sendWish(){
     const wishText=document.getElementById('userWish').value;
+    const feedback=document.getElementById('feedback');
     if(!wishText) return alert('Please write your wish first!');
 
     emailjs.send(
@@ -145,12 +148,12 @@
       "i_ddugLdA5DnAdBVDWbYl"
     )
     .then(response=>{
-      alert('Wish sent successfully!');
+      feedback.textContent = "🎉 Your wish has been sent!";
       document.getElementById('userWish').value='';
       console.log('EmailJS response:', response);
     })
     .catch(err=>{
-      alert('Error sending wish. Check console.');
+      feedback.textContent = "❌ Error sending wish. Check console.";
       console.error('EmailJS error:', err);
     });
   }
